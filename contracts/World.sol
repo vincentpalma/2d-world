@@ -22,9 +22,9 @@ contract World is ERC721 {
         seed = _seed;
     }
     // ------ End
-    
-    function mintParcel(uint parcelId ) public payable{
-        require(!_exists(parcelId));
+
+    function mintParcel(uint256 parcelId ) public payable{
+        require(!_exists(parcelId), "Parcel already exists");
         require(msg.value >= 1 ether, "Price for minting is 1 ETH");
         _safeMint(msg.sender, parcelId);
         console.log('Parcel',parcelId,'has been minted');
