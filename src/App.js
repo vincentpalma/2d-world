@@ -4,12 +4,13 @@ import { ethers } from 'ethers'
 import World from './artifacts/contracts/World.sol/World.json'
 
 // Update with the contract address logged out to the CLI when it was deployed 
-const worldAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+const worldAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
 
 function App() {
   // store seed in local state
   const [seed, setSeedValue] = useState()
-  const [parcelId, setParcelId] = useState()
+  const [parcelX, setParcelX] = useState()
+  const [parcelY, setParcelY] = useState()
 
   // request access to the user's MetaMask account
   async function requestAccount() {
@@ -51,7 +52,7 @@ function App() {
       const signer = provider.getSigner()
       const contract = new ethers.Contract(worldAddress, World.abi, signer)
       const options = {value: ethers.utils.parseEther("1.0")}
-      const transaction = await contract.mintParcel(parseInt(parcelId), options)
+      const transaction = await contract.mintParcel(parseInt(parcelX),parseInt(parcelY), options)
       await transaction.wait()
     }    
   }
@@ -63,7 +64,8 @@ function App() {
         <button onClick={setSeed}>Set seed</button>
         <input onChange={e => setSeedValue(e.target.value)} placeholder="Set seed" />
         <button onClick={mintParcel}>Mint parcel</button>
-        <input onChange={e => setParcelId(e.target.value)} placeholder="Parcel ID" />
+        <input onChange={e => setParcelX(e.target.value)} placeholder="Parcel x coord" />
+        <input onChange={e => setParcelY(e.target.value)} placeholder="Parcel y coord" />
       </header>
     </div>
   );
