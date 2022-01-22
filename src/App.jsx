@@ -66,8 +66,8 @@ function App() {
   async function generateNoiseMatrix() {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    canvas.width = 80;
-    canvas.height = 80;
+    canvas.width = 20;
+    canvas.height = 20;
 
     const scale = 2**13;
     const offsetx = 0;
@@ -87,7 +87,7 @@ function App() {
           let nf2 = 0.5*((await contract.noise(2*scale*i+offsetx,2*scale*j+offsety)).toNumber() / 65536);
           let nf3 = 0.25*((await contract.noise(4*scale*i+offsetx,4*scale*j+offsety)).toNumber() / 65536);
           let e = (nf+nf2+nf3)/1.75
-          let v = ((e+1)/2)*255
+          let v = ((e*Math.sqrt(2)+1)/2)*255 // range of perlin noise is [-sqrt(N/4),sqrt(N/4)], convert to [0,1]
           var color = "rgb("+v+","+v+","+v+")";
           ctx.fillStyle = color;
           ctx.fillRect(i,j,1,1);
