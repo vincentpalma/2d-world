@@ -16,6 +16,7 @@ npx hardhat help
 Procedure:
 ```shell
 npx hardhat compile
+export NODE_OPTIONS=--openssl-legacy-provider
 npx hardhat node
 npx hardhat run scripts/deploy.js --network localhost
 ```

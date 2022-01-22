@@ -13,8 +13,16 @@ async function main() {
   // manually to make sure everything is compiled
   // await hre.run('compile');
 
+  const Perlin = await hre.ethers.getContractFactory("PerlinNoise");
+  const perlin = await Perlin.deploy();
+  await perlin.deployed()
+
   // We get the contract to deploy
-  const World = await hre.ethers.getContractFactory("World");
+  const World = await hre.ethers.getContractFactory("World", {
+    libraries: {
+      PerlinNoise: perlin.address,
+    },
+  });
   const world = await World.deploy("Hello, Hardhat!");
 
   await world.deployed();

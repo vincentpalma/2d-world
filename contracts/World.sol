@@ -3,9 +3,15 @@ pragma solidity ^0.8.4;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./PerlinNoise.sol";
 
 contract World is ERC721 {
     string private seed;
+    
+    struct Coords {
+        int128 x;
+        int128 y;
+    }
 
     constructor(string memory _seed) ERC721("World","World") {
         console.log("Deploying a World with seed:", _seed);
@@ -25,9 +31,13 @@ contract World is ERC721 {
 
     function mintParcel(int128 x, int128 y ) public payable{
         require(msg.value >= 1 ether, "Price for minting is 1 ETH");
-        uint256 parcelId = uint256(int256(x) << 128 | y); //concat x and y
+        uint256 parcelId = uint256(int256(x) << 128 | y); //concat x and y into one number
         require(!_exists(parcelId), "Parcel already exists");
         _safeMint(msg.sender, parcelId);
         console.log('Parcel',parcelId,'has been minted');
+    }
+
+    function noise(int128 x, int128 y) public pure returns(int256) {
+        return PerlinNoise.noise2d(x,y); // calculate noise;
     }
 }
