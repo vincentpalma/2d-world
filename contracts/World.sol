@@ -40,25 +40,4 @@ contract World is ERC721 {
     function noise(int128 x, int128 y) public pure returns(int256) {
         return PerlinNoise.noise2d(x,y); // calculate noise;
     }
-
-        // lerp, fade, grad2, ptable, ftable, noise2d debug
-    function lerp(int256 x, int256 y, int256 z) public pure returns(int256) {
-        return PerlinNoise.lerp(x,y,z);
-    }
-
-    function fade(int256 x) public pure returns(int256) {
-        return PerlinNoise.fade(x);
-    }    
-
-    function grad2(int256 x, int256 y, int256 z) public pure returns(int256) {
-        return PerlinNoise.grad2(x,y,z);
-    }
-
-    function ptable(int256 x) public pure returns(int256) {
-        return PerlinNoise.ptable(x);
-    }
-    
-    function ftable(int256 x) public pure returns(int256) {
-        return PerlinNoise.ftable(x);
-    }
 }

@@ -1,5 +1,5 @@
 import './App.css';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 function noise2d(x, y) {
     var temp = ptable(x >> 16 & 0xff /* Unit square X */);
@@ -36,7 +36,7 @@ function grad2(h, x, y) {
     h &= 3;
 
     var u = 0;
-    if ((h & 0x1) == 0) {
+    if ((h & 0x1) === 0) {
         u = x;
     } else {
         u = -x;
@@ -1080,6 +1080,10 @@ function ftable(i) {
 }
 
 function Box() {
+    const scale = 2**10;
+    const offsetx = 0;
+    const offsety = 0;
+
     const canvasRef = useRef(null);
 
     function generateNoiseJS() {
@@ -1087,10 +1091,6 @@ function Box() {
         const ctx = canvas.getContext("2d");
         canvas.width = 800;
         canvas.height = 800;
-
-        const scale = 2**13;
-        const offsetx = 0;
-        const offsety = 0;
   
         ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -1113,10 +1113,84 @@ function Box() {
         console.log('result: ', r)
     }
 
+    const mapCanvasRef = useRef(null);
+
+    function biome (elevation) {
+        if (elevation < 0.3) {
+            return 'WATER'
+        } else if ( elevation < 0.33 ){
+            return 'BEACH'
+        } else if ( elevation < 0.95 ){
+            return 'LAND'
+        } else {
+            return 'IRON'
+        }
+
+    }
+
+    function mapColor(biome) {
+        if (biome === 'WATER') {
+            return 'rgb(6, 34, 176)' // blue
+        } else if (biome === 'BEACH') {
+            return 'rgb(233, 243, 185)'
+        } else if (biome === 'LAND') {
+            return 'rgb(0, 110, 11)'
+        } else if (biome === 'IRON') {
+            return 'rgb(191, 191, 191)'
+        }
+    }
+
+    function generateMap() {
+        const canvas = mapCanvasRef.current;
+        const ctx = canvas.getContext("2d");
+        canvas.width = 800;
+        canvas.height = 800;
+  
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        var r = [];
+        for (let i = 0; i<canvas.width; i++){
+            let t = [];
+            for (let j = 0; j<canvas.height; j++) {
+            let nf = noise2d(scale*i+offsetx,scale*j+offsety) / 65536;
+            let nf2 = 0.5*(noise2d(2*scale*i+offsetx,2*scale*j+offsety) / 65536);
+            let nf3 = 0.25*(noise2d(4*scale*i+offsetx,4*scale*j+offsety) / 65536);
+            let e = (nf+nf2+nf3)/1.75
+            e = (e*Math.sqrt(2)+1)/2 // range of perlin noise is [-sqrt(N/4),sqrt(N/4)], convert to [0,1]
+            e = Math.pow(e*1.2,2)
+            var color = mapColor(biome(e))//"rgb("+v+","+v+","+v+")";
+            ctx.fillStyle = color;
+            ctx.fillRect(i,j,1,1);
+            t.push(nf)
+            }
+            r.push(t)
+        }
+        console.log('result: ', r)
+    }    
+
+    function showGrid() {
+        const canvas = mapCanvasRef.current;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = 'rgba(0,0,0,0.6)'
+
+        for (let i = 0; i<canvas.width; i++){
+            for (let j = 0; j<canvas.height; j++) {
+                if (j%16 === 0 || i%16 === 0){
+                    ctx.fillRect(i,j,1,1);
+                }
+            }
+        }
+    }
+
     return(
         <>
             <button onClick={generateNoiseJS}>Generate noise JS</button>
             <canvas ref={canvasRef} style={{backgroundColor:'white'}}></canvas>
+            <div>
+                <button onClick={generateMap}>Generate Map</button>
+                <button onClick={showGrid}>Show Grid (16x16)</button>
+            </div>
+            <canvas ref={mapCanvasRef}></canvas>            
         </>
     );
 }
