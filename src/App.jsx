@@ -2,6 +2,7 @@ import './App.css';
 import { useState, useEffect, useRef } from 'react';
 import { ethers } from 'ethers'
 import World from './artifacts/contracts/World.sol/World.json'
+import Box from './PerlinNoise';
 
 // Update with the contract address logged out to the CLI when it was deployed 
 const worldAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
@@ -99,18 +100,38 @@ function App() {
     }        
   }
   
+  async function debug() {
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(worldAddress, World.abi, signer)  
+    
+    //debug
+    const x = 0
+    const y = 1
+    const z = 1
+    console.log(
+      'SOLIDITY\nnoise2d: %d\nlerp: %d\nfade: %d\ngrad2: %d\nptable: %d\nftable: %d', 
+      (await contract.noise(x,y)).toNumber(), 
+      (await contract.lerp(x,y,z)).toNumber(), 
+      (await contract.fade(x)).toNumber(), 
+      (await contract.grad2(x,y,z)).toNumber(), 
+      (await contract.ptable(x)).toNumber(), 
+      (await contract.ftable(x)).toNumber()
+    )
+  }
 
   return (
     <div className="App">
       <header className="App-header">
+        <button onClick={debug}></button>
         <button onClick={fetchSeed}>Fetch seed</button>
         <button onClick={setSeed}>Set seed</button>
         <input onChange={e => setSeedValue(e.target.value)} placeholder="Set seed" />
         <button onClick={mintParcel}>Mint parcel</button>
         <input onChange={e => setParcelX(e.target.value)} placeholder="Parcel x coord" />
         <input onChange={e => setParcelY(e.target.value)} placeholder="Parcel y coord" />
-        <button onClick={generateNoiseMatrix}>Generate noise matrix</button>
+        <button onClick={generateNoiseMatrix}>Generate noise solidity</button>
         <canvas id="canvas" ref={canvasRef} style={{backgroundColor:'white'}}></canvas>
+        <Box />
       </header>
     </div>
   );
