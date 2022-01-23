@@ -1080,22 +1080,13 @@ function ftable(i) {
 }
 
 function Box() {
-    //debug
-    const x = 0
-    const y = 1
-    const z = 0
-    console.log(
-        'JAVASCRIPT\nnoise2d: %d\nlerp: %d\nfade: %d\ngrad2: %d\nptable: %d\nftable: %d', 
-        noise2d(x,y), lerp(x,y,z), fade(x), grad2(x,y,z), ptable(x), ftable(x)
-    )
-
     const canvasRef = useRef(null);
 
     function generateNoiseJS() {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
-        canvas.width = 200;
-        canvas.height = 200;
+        canvas.width = 800;
+        canvas.height = 800;
 
         const scale = 2**13;
         const offsetx = 0;
@@ -1123,10 +1114,10 @@ function Box() {
     }
 
     return(
-        <div id="box">
+        <>
             <button onClick={generateNoiseJS}>Generate noise JS</button>
             <canvas ref={canvasRef} style={{backgroundColor:'white'}}></canvas>
-        </div>
+        </>
     );
 }
 

@@ -61,9 +61,6 @@ function App() {
 
   const canvasRef = useRef(null);
 
-  //var canvas = document.getElementById("canvas"),
-  //ctx = canvas.getContext("2d");
-
   async function generateNoiseMatrix() {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -99,30 +96,10 @@ function App() {
       console.log('result: ', r)
     }        
   }
-  
-  async function debug() {
-    const signer = provider.getSigner()
-    const contract = new ethers.Contract(worldAddress, World.abi, signer)  
-    
-    //debug
-    const x = 0
-    const y = 1
-    const z = 1
-    console.log(
-      'SOLIDITY\nnoise2d: %d\nlerp: %d\nfade: %d\ngrad2: %d\nptable: %d\nftable: %d', 
-      (await contract.noise(x,y)).toNumber(), 
-      (await contract.lerp(x,y,z)).toNumber(), 
-      (await contract.fade(x)).toNumber(), 
-      (await contract.grad2(x,y,z)).toNumber(), 
-      (await contract.ptable(x)).toNumber(), 
-      (await contract.ftable(x)).toNumber()
-    )
-  }
 
   return (
     <div className="App">
       <header className="App-header">
-        <button onClick={debug}></button>
         <button onClick={fetchSeed}>Fetch seed</button>
         <button onClick={setSeed}>Set seed</button>
         <input onChange={e => setSeedValue(e.target.value)} placeholder="Set seed" />
